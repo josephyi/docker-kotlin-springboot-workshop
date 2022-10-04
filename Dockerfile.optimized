@@ -1,0 +1,49 @@
+# syntax=docker/dockerfile:1.4
+ARG JDK_IMAGE=eclipse-temurin
+ARG JDK_IMAGE_TAG=17.0.4.1_1-jdk
+ARG JRE_IMAGE=gcr.io/distroless/java-base-debian11
+ARG JRE_IMAGE_TAG=nonroot
+
+FROM ${JDK_IMAGE}:${JDK_IMAGE_TAG} as builder
+WORKDIR /workspace
+# Install Gradle
+COPY --link ./gradle ./gradle
+COPY --link ./gradlew ./gradlew
+RUN ./gradlew --no-daemon
+# Install dependencies
+COPY --link *.gradle.* .
+RUN ./gradlew --no-daemon dependencies
+# Build App
+COPY --link . . 
+RUN --mount=type=secret,id=SOME_BUILD_SECRET \
+    ./gradlew bootJar -PSOME_BUILD_SECRET="$(cat /run/secrets/SOME_BUILD_SECRET)" \
+    && java -Djarmode=layertools \
+            -jar ./build/libs/app.jar \
+            extract --destination ./build/layers \
+    && JAVA_RUNTIME_MODULES="$(jdeps \
+       --ignore-missing-deps \
+       -q \
+       -R \
+       --multi-release 17 \
+       --print-module-deps \
+       --class-path="./build/layers/dependencies/BOOT-INF/lib/*" \
+       --module-path="./build/layers/dependencies/BOOT-INF/lib/*" \
+       ./build/libs/app.jar)" \
+    && jlink \
+       --no-header-files \
+       --no-man-pages \
+       --strip-debug \
+       --compress 2 \
+       --add-modules "${JAVA_RUNTIME_MODULES}" \
+       --output javaruntime
+
+FROM ${JRE_IMAGE}:${JRE_IMAGE_TAG} as production
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH "${JAVA_HOME}/bin:${PATH}"
+WORKDIR /app
+COPY --link --from=builder /workspace/build/layers/application .
+COPY --link --from=builder /workspace/build/layers/dependencies .
+COPY --link --from=builder /workspace/build/layers/snapshot-dependencies .
+COPY --link --from=builder /workspace/build/layers/spring-boot-loader .
+COPY --link --from=builder /workspace/javaruntime ${JAVA_HOME}
+ENTRYPOINT [ "java", "org.springframework.boot.loader.JarLauncher" ]

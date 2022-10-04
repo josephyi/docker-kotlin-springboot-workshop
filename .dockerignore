@@ -1,7 +1,9 @@
-./build
+.gradle
 .vscode
+./bin
+./build
 *.md
 LICENSE
 .dockerignore
 .git*
-Dockerfile
+Dockerfile*
