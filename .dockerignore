@@ -1,0 +1,7 @@
+./build
+.vscode
+*.md
+LICENSE
+.dockerignore
+.git*
+Dockerfile
