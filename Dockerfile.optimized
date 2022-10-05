@@ -12,10 +12,12 @@ COPY --link ./gradlew ./gradlew
 RUN ./gradlew --no-daemon
 # Install dependencies
 COPY --link *.gradle.* .
-RUN ./gradlew --no-daemon dependencies
+RUN --mount=type=cache,target=/root/.gradle \ 
+    ./gradlew --no-daemon -q dependencies
 # Build App
 COPY --link . . 
 RUN --mount=type=secret,id=SOME_BUILD_SECRET \
+    --mount=type=cache,target=/root/.gradle \
     ./gradlew bootJar -PSOME_BUILD_SECRET="$(cat /run/secrets/SOME_BUILD_SECRET)" \
     && java -Djarmode=layertools \
             -jar ./build/libs/app.jar \
