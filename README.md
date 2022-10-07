@@ -53,7 +53,7 @@ docker build \
 dive workshop
 
 # Scan Image
-trive image workshop
+trivy image workshop
 
 # Build Specific Stage
 export SOME_BUILD_SECRET="notinhistorybecausesecret"

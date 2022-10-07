@@ -43,9 +43,10 @@ FROM ${JRE_IMAGE}:${JRE_IMAGE_TAG} as production
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH "${JAVA_HOME}/bin:${PATH}"
 WORKDIR /app
-COPY --link --from=builder /workspace/build/layers/application .
-COPY --link --from=builder /workspace/build/layers/dependencies .
-COPY --link --from=builder /workspace/build/layers/snapshot-dependencies .
-COPY --link --from=builder /workspace/build/layers/spring-boot-loader .
 COPY --link --from=builder /workspace/javaruntime ${JAVA_HOME}
+COPY --link --from=builder /workspace/build/layers/dependencies .
+COPY --link --from=builder /workspace/build/layers/spring-boot-loader .
+COPY --link --from=builder /workspace/build/layers/snapshot-dependencies .
+COPY --link --from=builder /workspace/build/layers/application .
+
 ENTRYPOINT [ "java", "org.springframework.boot.loader.JarLauncher" ]
