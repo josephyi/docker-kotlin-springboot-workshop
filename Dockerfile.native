@@ -1,0 +1,26 @@
+# syntax=docker/dockerfile:1.4
+ARG JDK_IMAGE=bellsoft/liberica-native-image-kit-container
+ARG JDK_IMAGE_TAG=jdk-17-nik-22-glibc
+ARG JRE_IMAGE=gcr.io/distroless/java-base-debian11
+ARG JRE_IMAGE_TAG=nonroot
+
+FROM ${JDK_IMAGE}:${JDK_IMAGE_TAG} as builder
+WORKDIR /workspace
+# Install Gradle
+COPY --link ./gradle ./gradle
+COPY --link ./gradlew ./gradlew
+RUN ./gradlew --no-daemon
+# Install dependencies
+COPY --link *.gradle.* .
+RUN --mount=type=cache,target=/root/.gradle \ 
+    ./gradlew --no-daemon -q dependencies
+# Build App
+COPY --link . . 
+RUN --mount=type=secret,id=SOME_BUILD_SECRET \
+    --mount=type=cache,target=/root/.gradle \
+    ./gradlew nativeCompile -PSOME_BUILD_SECRET="$(cat /run/secrets/SOME_BUILD_SECRET)"
+
+FROM bellsoft/alpaquita-linux-base:stream-glibc
+WORKDIR /app
+COPY --link --from=builder --chmod=0755 /workspace/build/native/nativeCompile .
+ENTRYPOINT ["/app/demo"]
