@@ -25,7 +25,7 @@ jobs:
         run:
           echo "$FROM_SOME_OUTPUT"
         env:
-          FROM_SOME_OUTPUT: what/about/this/${{ steps.date.outputs.SOME_OUTPUT }}
+          FROM_SOME_OUTPUT: what/about/this/${{ stepss.date.outputs.SOME_OUTPUT }}
       - name: Test
         uses: gradle/gradle-build-action@v2
         with:
