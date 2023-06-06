@@ -18,6 +18,14 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
+      - name: Set some output
+        id: some_output
+        run: echo "SOME_OUTPUT=$(pwd)" >> $GITHUB_OUTPUT
+      - name: Use Output
+        run:
+          echo "$FROM_SOME_OUTPUT"
+        env:
+          FROM_SOME_OUTPUT: "output was ${{ steps.some_output.outputs.SOME_OUTPUT }}"
       - name: Test
         uses: gradle/gradle-build-action@v2
         with:
