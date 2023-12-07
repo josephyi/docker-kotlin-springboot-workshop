@@ -56,6 +56,8 @@ jobs:
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value={{sha}}-${{ matrix.cache.type }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Cache Docker layers # Only for local cache
         if: matrix.cache.type == 'local'
         uses: actions/cache@v3
