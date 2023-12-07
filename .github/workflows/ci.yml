@@ -18,10 +18,9 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
+      - uses: gradle/gradle-build-action@v2
       - name: Test
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: test
+        run: ./gradlew test
   docker:
     strategy:
       matrix:
