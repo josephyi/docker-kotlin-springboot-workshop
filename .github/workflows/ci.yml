@@ -76,7 +76,6 @@ jobs:
           file: Dockerfile.optimized
           platforms: ${{ matrix.platform }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: ${{ matrix.cache.cache-from }}
           cache-to: ${{ matrix.cache.cache-to }}
