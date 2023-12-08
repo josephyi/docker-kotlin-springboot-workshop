@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 ARG JDK_IMAGE=eclipse-temurin
 ARG JDK_IMAGE_TAG=21.0.1_12-jdk
-ARG JRE_IMAGE=gcr.io/distroless/java-base-debian11
+ARG JRE_IMAGE=gcr.io/distroless/java-base-debian12
 ARG JRE_IMAGE_TAG=nonroot
 
 FROM ${JDK_IMAGE}:${JDK_IMAGE_TAG} as builder
