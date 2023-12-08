@@ -33,13 +33,7 @@ jobs:
               type: registry,
               cache-from: "type=registry,ref=ghcr.io/josephyi/docker-kotlin-springboot-workshop:buildcache",
               cache-to: "type=registry,ref=ghcr.io/josephyi/docker-kotlin-springboot-workshop:buildcache,mode=max",
-            },
-            { type: gha, cache-from: "type=gha", cache-to: "type=gha,mode=max" },
-            {
-              type: local,
-              cache-from: "type=local,src=/tmp/.buildx-cache",
-              cache-to: "type=local,dest=/tmp/.buildx-cache-new,mode=max",
-            },
+            }
           ]
     name: 🐳 Dockerize 🐳
     needs: [build]
