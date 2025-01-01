@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.4
+# syntax=docker/dockerfile:1
 ARG JDK_IMAGE=eclipse-temurin
 ARG JDK_IMAGE_TAG=21.0.1_12-jdk
 ARG JRE_IMAGE=gcr.io/distroless/java-base-debian12
