@@ -28,11 +28,13 @@ jobs:
           [
             {
               runner: ubuntu-latest,
-              platform: linux/amd64
+              platform: linux/amd64,
+              digest-suffix: linux-amd64
             },
             {
               runner: ubuntu-latest,
-              platform: linux/arm64
+              platform: linux/arm64,
+              digest-suffix: linux-arm64
             }
           ]
         cache:
@@ -96,7 +98,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-{{ matrix.platforms.platform }}
+          name: digests-${{ matrix.platforms.digest-suffix }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1

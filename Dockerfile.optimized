@@ -4,7 +4,7 @@ ARG JDK_IMAGE_TAG=21.0.1_12-jdk
 ARG JRE_IMAGE=gcr.io/distroless/java-base-debian12
 ARG JRE_IMAGE_TAG=nonroot
 
-FROM ${JDK_IMAGE}:${JDK_IMAGE_TAG} as builder
+FROM ${JDK_IMAGE}:${JDK_IMAGE_TAG} AS builder
 WORKDIR /workspace
 # Install Gradle
 COPY --link ./gradle ./gradle
@@ -39,9 +39,9 @@ RUN --mount=type=secret,id=SOME_BUILD_SECRET \
        --add-modules "${JAVA_RUNTIME_MODULES}" \
        --output javaruntime
 
-FROM ${JRE_IMAGE}:${JRE_IMAGE_TAG} as production
+FROM ${JRE_IMAGE}:${JRE_IMAGE_TAG} AS production
 ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH "${JAVA_HOME}/bin:${PATH}"
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 WORKDIR /app
 COPY --link --from=builder /workspace/javaruntime ${JAVA_HOME}
 COPY --link --from=builder /workspace/build/layers/dependencies .
