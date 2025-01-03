@@ -87,6 +87,7 @@ jobs:
           cache-to: ${{ matrix.cache.cache-to }}
           outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
           sbom: true
+          annotations: ${{ steps.meta.outputs.annotations }}
       - name: Move cache
         if: matrix.cache.type == 'local'
         run: |
