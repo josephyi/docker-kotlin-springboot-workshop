@@ -32,7 +32,7 @@ jobs:
               digest-suffix: linux-amd64
             },
             {
-              runner: ubuntu-latest,
+              runner: ubuntu-24.04-arm,
               platform: linux/arm64,
               digest-suffix: linux-arm64
             }
